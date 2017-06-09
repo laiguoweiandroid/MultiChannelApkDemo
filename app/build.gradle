@@ -16,6 +16,7 @@ android {
     }
     //添加我们的签名文件配置
     signingConfigs {
+        debug{}
         //添加我们包的签名
         release{
             storeFile file("D:/我的签名/lgw.jks")
@@ -28,8 +29,21 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
             signingConfig signingConfigs.release
+
+            //指定我们Release包的名字就是我们渠道的名字
+            applicationVariants.all{
+                variant ->variant.outputs.each{
+                    output->
+                        def outFile=output.outputFile
+                        if(outFile!=null&&outFile.name.endsWith(".apk")){
+
+                            def fileName ="${variant.productFlavors[0].name}"+".apk"
+                            output.outputFile = new File(outFile.parent,fileName)
+                        }
+                }
+            }
+
         }
     }
     //渠道
